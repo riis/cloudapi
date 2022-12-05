@@ -68,11 +68,17 @@ const getBindingDevices = async function (workspace_id, page, page_size, domain)
   return await result.json()
 }
 
-export const getDeviceBySn = async function (workspace_id, device_sn) {
+const getDeviceBySn = async function (workspace_id, device_sn) {
   const url = `${HTTP_PREFIX}/devices/${workspace_id}/devices/${device_sn}`
   const result = await fetch(url, {
     headers: defaultHeaders()
   })
+  return await result.json()
+}
+
+const getUserInfo = async function () {
+  const url = `${HTTP_PREFIX}/users/current`
+  const result = await fetch(url, {headers: defaultHeaders()})
   return await result.json()
 }
 
@@ -81,5 +87,7 @@ export {
   refreshToken,
   bindDevice,
   getBindingDevices,
-  getPlatformInfo
+  getPlatformInfo,
+  getUserInfo,
+  getDeviceBySn
 }

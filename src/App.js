@@ -42,7 +42,7 @@ function App() {
 
   return (
     <Flex width="100%" height={'100vh'} >
-      <Flex flexDir={"column"} width="15%" height={'100%'} p={2}>
+      <Flex flexDir={"column"} width="300px" height={'100%'} p={2}>
         <Button onClick={() => fetchDevices()} >Refresh</Button>
         {devices.map(device => {
           console.log(device)

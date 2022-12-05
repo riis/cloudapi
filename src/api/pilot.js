@@ -350,6 +350,7 @@ export const messageHandler = async (payload) => {
 }
 
 export const connectCallback = async (arg) => {
+  console.log("inside callback", arg)
   if (arg) {
     console.log("Connected")
     const sn = apiPilot.getAircraftSN()
@@ -403,7 +404,7 @@ export const wsConnectCallback = async (arg) => {
   console.log('wsConnectedCallback', arg)
 }
 
-const getDeviceInfo = () => {
+export const getDeviceInfo = () => {
   const sn = apiPilot.getAircraftSN()
   const userId = localStorage.getItem(ELocalStorageKey.UserId)
   const workspace_id = localStorage.getItem(ELocalStorageKey.WorkspaceId)

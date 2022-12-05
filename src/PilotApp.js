@@ -1,12 +1,13 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import { createBinding, checkToken, verifyLicense, apiPilot, messageHandler, connectCallback, wsConnectCallback } from './api/pilot';
+import { createBinding, checkToken, verifyLicense, apiPilot, messageHandler, connectCallback, wsConnectCallback, getDeviceInfo } from './api/pilot';
 import VConsole from 'vconsole';
-import { DOMAIN, EComponentName, ELocalStorageKey } from './api/enums';
-import { getBindingDevices, getPlatformInfo } from './api/manage';
+import { DOMAIN, EComponentName, ELocalStorageKey, EStatusValue } from './api/enums';
+import { getBindingDevices, getPlatformInfo, getUserInfo } from './api/manage';
 import { Text } from '@chakra-ui/react'
 import { useWebsocket } from './hooks/use-websocket';
 
+const components = apiPilot.init()
 
 function PilotApp() {
 
@@ -22,6 +23,13 @@ function PilotApp() {
     const isVerified = await verifyLicense()
     setLicenseVerfied(isVerified)
   }
+
+  console.log("api", apiPilot.isComponentLoaded(EComponentName.Api))
+  console.log("map", apiPilot.isComponentLoaded(EComponentName.Map))
+  console.log("ws", apiPilot.isComponentLoaded(EComponentName.Ws))
+  console.log("thing", apiPilot.isComponentLoaded(EComponentName.Thing))
+  console.log("tsa", apiPilot.isComponentLoaded(EComponentName.Tsa))
+
 
   const setup = async () => {
     if (licenseVerified) {
@@ -57,14 +65,6 @@ function PilotApp() {
 
   useEffect(() => {
     const vConsole = new VConsole();
-
-    window.connectCallback = arg => {
-      connectCallback(arg)
-    }
-    window.wsConnectCallback = arg => {
-      wsConnectCallback(arg)
-    }
-
     verify()
 
     return () => {
@@ -75,6 +75,48 @@ function PilotApp() {
   useEffect(() => {
     setup()
   }, [licenseVerified])
+
+  useEffect(() => {
+    window.connectCallback = arg => {
+      connectCallback(arg)
+    }
+    window.wsConnectCallback = arg => {
+      wsConnectCallback(arg)
+    }
+
+    const gatewaySn = apiPilot.getRemoteControllerSN()
+    if (gatewaySn === EStatusValue.DISCONNECT.toString()) {
+      console.warn('Data is not available, please restart the remote control.')
+      return
+    }
+
+    getDeviceInfo()
+
+    const isLoaded = apiPilot.isComponentLoaded(EComponentName.Thing)
+    if (isLoaded) {
+      apiPilot.setPlatformMessage(
+        '' + localStorage.getItem(ELocalStorageKey.PlatformName),
+        localStorage.getItem(ELocalStorageKey.WorkspaceName),
+        '' + localStorage.getItem(ELocalStorageKey.WorkspaceDesc)
+      )
+      return
+    }
+
+    apiPilot.setWorkspaceId(localStorage.getItem(ELocalStorageKey.WorkspaceId))
+
+    getUserInfo().then(res => {
+      localStorage.setItem(ELocalStorageKey.Username, 'pilot')
+      // thing
+      const param = {
+        host: res.data.mqtt_addr,
+        username: res.data.mqtt_username,
+        password: res.data.mqtt_password,
+        connectCallback: 'connectCallback'
+      }
+      components.set(EComponentName.Thing, param)
+      apiPilot.loadComponent(EComponentName.Thing, components.get(EComponentName.Thing))
+    })
+  }, [])
 
   return (
     <div>
