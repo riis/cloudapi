@@ -45,6 +45,7 @@ function App() {
       <Flex flexDir={"column"} width="15%" height={'100%'} p={2}>
         <Button onClick={() => fetchDevices()} >Refresh</Button>
         {devices.map(device => {
+          console.log(device)
           return <DeviceCard device={device} key={device.device_sn} />
         })}
       </Flex>

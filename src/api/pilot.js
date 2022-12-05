@@ -1,9 +1,10 @@
 import { HTTP_PREFIX, CURRENT_CONFIG } from "./config"
-import { EComponentName, EPhotoType, EUserType, EVideoPublishType, ELocalStorageKey } from "./enums"
-import { login, refreshToken } from "./manage"
+import { EComponentName, EPhotoType, EUserType, EVideoPublishType, ELocalStorageKey, EBizCode, EDownloadOwner, EStatusValue } from "./enums"
+import { getDeviceBySn, login, refreshToken } from "./manage"
 import { bindDevice } from "./manage"
 
 const components = new Map()
+let bindNum;
 
 function returnBool(response) {
   console.log(response)
@@ -327,4 +328,99 @@ export const createBinding = async () => {
   return true
   //drone.data.bound_status = true
   //localStorage.setItem(ELocalStorageKey.Device, JSON.stringify(drone.data))
+}
+
+export const messageHandler = async (payload) => {
+  if (!payload) {
+    return
+  }
+  switch (payload.biz_code) {
+    case EBizCode.DeviceOnline: {
+      console.info('online: ', payload)
+      break
+    }
+    case EBizCode.DeviceOffline: {
+      console.info('offline: ', payload)
+
+    }
+
+    default:
+      break
+  }
+}
+
+export const connectCallback = async (arg) => {
+  if (arg) {
+    console.log("Connected")
+    const sn = apiPilot.getAircraftSN()
+    const userId = localStorage.getItem(ELocalStorageKey.UserId)
+    const workspace_id = localStorage.getItem(ELocalStorageKey.WorkspaceId)
+
+    const bindParam = {
+      device_sn: sn,
+      user_id: userId,
+      workspace_id: workspace_id
+    }
+    // liveshare
+    apiPilot.loadComponent(EComponentName.Liveshare, components.get(EComponentName.Liveshare))
+
+    // ws
+    const wsParam = components.get(EComponentName.Ws)
+    wsParam.token = apiPilot.getToken()
+    apiPilot.loadComponent(EComponentName.Ws, components.get(EComponentName.Ws))
+
+    // map
+    const mapParam = components.get(EComponentName.Map)
+    mapParam.userName = 'adminPC'
+    apiPilot.loadComponent(EComponentName.Map, components.get(EComponentName.Map))
+
+    // tsa
+    apiPilot.loadComponent(EComponentName.Tsa, components.get(EComponentName.Tsa))
+
+    // media
+    apiPilot.loadComponent(EComponentName.Media, components.get(EComponentName.Media))
+    apiPilot.setDownloadOwner(EDownloadOwner.Mine.valueOf())
+
+    // mission
+    apiPilot.loadComponent(EComponentName.Mission, {})
+
+    bindNum = setInterval(() => {
+      bindDevice(bindParam).then(bindRes => {
+        if (bindRes.code !== 0) {
+          console.error(bindRes.message)
+        } else {
+          clearInterval(bindNum)
+        }
+      })
+    }, 2000)
+    setTimeout(getDeviceInfo, 3000)
+  } else {
+    console.log("Disconnected")
+  }
+}
+
+export const wsConnectCallback = async (arg) => {
+  console.log('wsConnectedCallback', arg)
+}
+
+const getDeviceInfo = () => {
+  const sn = apiPilot.getAircraftSN()
+  const userId = localStorage.getItem(ELocalStorageKey.UserId)
+  const workspace_id = localStorage.getItem(ELocalStorageKey.WorkspaceId)
+
+  const bindParam = {
+    device_sn: sn,
+    user_id: userId,
+    workspace_id: workspace_id
+  }
+
+  if (sn === EStatusValue.DISCONNECT) {
+    return
+  }
+  getDeviceBySn(bindParam.workspace_id, sn).then(res => {
+    if (res.code !== 0) {
+      return
+    }
+    console.log(res.data)
+  })
 }

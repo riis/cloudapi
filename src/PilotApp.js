@@ -1,10 +1,11 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import { createBinding, checkToken, verifyLicense, apiPilot } from './api/pilot';
+import { createBinding, checkToken, verifyLicense, apiPilot, messageHandler, connectCallback, wsConnectCallback } from './api/pilot';
 import VConsole from 'vconsole';
 import { DOMAIN, EComponentName, ELocalStorageKey } from './api/enums';
 import { getBindingDevices, getPlatformInfo } from './api/manage';
 import { Text } from '@chakra-ui/react'
+import { useWebsocket } from './hooks/use-websocket';
 
 
 function PilotApp() {
@@ -14,6 +15,8 @@ function PilotApp() {
   const [bound, setBind] = useState(false)
 
   console.log("isLoggedIn", loggedIn)
+
+  useWebsocket(messageHandler)
 
   const verify = async () => {
     const isVerified = await verifyLicense()
@@ -54,6 +57,14 @@ function PilotApp() {
 
   useEffect(() => {
     const vConsole = new VConsole();
+
+    window.connectCallback = arg => {
+      connectCallback(arg)
+    }
+    window.wsConnectCallback = arg => {
+      wsConnectCallback(arg)
+    }
+
     verify()
 
     return () => {
