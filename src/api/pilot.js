@@ -372,7 +372,7 @@ export const connectCallback = async (arg) => {
 
     // map
     const mapParam = components.get(EComponentName.Map)
-    mapParam.userName = 'adminPC'
+    mapParam.userName = 'pilot'
     apiPilot.loadComponent(EComponentName.Map, components.get(EComponentName.Map))
 
     // tsa

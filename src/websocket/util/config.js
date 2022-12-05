@@ -1,4 +1,3 @@
-ELocalStorageKey
 import { CURRENT_CONFIG } from '../../api/config'
 import { ELocalStorageKey } from '../../api/enums'
 

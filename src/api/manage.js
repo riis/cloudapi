@@ -82,6 +82,12 @@ const getUserInfo = async function () {
   return await result.json()
 }
 
+const getDeviceTopo = async function (workspace_id) {
+  const url = `${HTTP_PREFIX}/devices/${workspace_id}/devices`
+  const result = await fetch(url, {headers: defaultHeaders()})
+  return await result.json()
+}
+
 export {
   login,
   refreshToken,
@@ -89,5 +95,6 @@ export {
   getBindingDevices,
   getPlatformInfo,
   getUserInfo,
-  getDeviceBySn
+  getDeviceBySn,
+  getDeviceTopo
 }

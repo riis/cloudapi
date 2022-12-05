@@ -13,7 +13,9 @@ export const useWebsocket = (messageHandler) => {
     webSocket?.registerMessageHandler(messageHandler)
     webSocket?.initSocket()
 
-    return webSocket?.close()
+    return () => {
+      return webSocket?.close()
+    }
   }, [])
 
 }
