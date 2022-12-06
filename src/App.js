@@ -10,7 +10,7 @@ import { getUnreadDeviceHms } from './api/project';
 import { TbDrone } from 'react-icons/tb'
 import { Map, Marker } from 'react-map-gl';
 
-mapboxgl.accessToken = 'pk.eyJ1IjoianJlZWR5LXJpaXMiLCJhIjoiY2xiYjh0MW04MGg4ejNxcGpvcTdic2E4cyJ9.3O96iR2olwbI6QVF7ZLe5Q'
+mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN
 
 function App() {
   const [devices, setDevices] = useState([])
