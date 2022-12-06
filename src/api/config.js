@@ -1,9 +1,9 @@
 const CURRENT_CONFIG = {
   // Office - 10.5.3.82
   // license
-  appId: '116285', // You need to go to the development website to apply.
-  appKey: 'ec7677a595061e5f12c363d67d6e06c', // You need to go to the development website to apply.
-  appLicense: 'OUDHXiTprnOlksxwDmSmAbdjEfAeLiJ2EJj6dgodkwY97RZfO0tUo7Iu3Izz+z66x7XL441Dz7f5qXXAmOMohwPXacHTwY+qTxP2hlOwdt7iUdjm3v4QoFoUebYH56cCxVZer6DI7JMWhbU07/rnY5IIcx6s3A1Pur9uCokUOx8=', // You need to go to the development website to apply.
+  appId: process.env.REACT_APP_APP_ID, // You need to go to the development website to apply.
+  appKey: process.env.REACT_APP_APP_KEY, // You need to go to the development website to apply.
+  appLicense: process.env.REACT_APP_APP_LICENSE, // You need to go to the development website to apply.
 
   // http
   baseURL: 'http://10.5.3.82:6789/', // This url must end with "/". Example: 'http://192.168.1.1:6789/'

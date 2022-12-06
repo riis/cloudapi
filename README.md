@@ -1,70 +1,17 @@
-# Getting Started with Create React App
+# DJI Cloud API Demo
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Demo to showcase connecting a drone to the Cloud API and viewing its real-time location on a map.
 
-## Available Scripts
+## Setup
+1. Follow the DJI Docker guide for setting up the backend / front end. However, the front-end will not be used.
+    > In my case, the `dji-cloud-api` itself does not work on docker, therefore, download the `Java` backend seperately and run it. In addition, the `emqx` version specified in the `dockerfile` may not work on M1 Macs, therefore, change the version to `latest`
 
-In the project directory, you can run:
+2. Update all environment variables in the backend configuration. By default, the MQTT username is `admin` and the password is `public`. 
+    > Note: OSS will not be used, therefore, leave it all commented out.
 
-### `npm start`
+3. Create a new file called `.env`, copy and past the existing text from `.env.example` into it. Then place a `Mapbox` public key, DJI `app id`, DJI `app key`, and DJI `app license` inside it.
+3. Run the containers (besides the `cloud-api-backend`) and run this application with `npm run start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+4. On the controller, go to the `third-party cloud services` and enter in `http://<your_machines_ip>:3000/pilot`, then click `connect`.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+5. On the site, click the refresh button to reload the device list. Then, click the `aircrafts` card to be taken to the drone's position on the map.
