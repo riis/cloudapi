@@ -2,8 +2,8 @@ import './App.css';
 import { useEffect, useState } from 'react';
 import { createBinding, checkToken, verifyLicense, apiPilot, messageHandler, connectCallback, wsConnectCallback, getDeviceInfo } from './api/pilot';
 import VConsole from 'vconsole';
-import { DOMAIN, EComponentName, ELocalStorageKey, EStatusValue } from './api/enums';
-import { getBindingDevices, getPlatformInfo, getUserInfo } from './api/manage';
+import { EComponentName, ELocalStorageKey, EStatusValue } from './api/enums';
+import { getBindingDevices, getUserInfo } from './api/manage';
 import { Flex, Text } from '@chakra-ui/react'
 import { useWebsocket } from './hooks/use-websocket';
 import ModuleCard from './components/pilot/module_card';
@@ -47,13 +47,6 @@ function PilotApp() {
     apiPilot.isComponentLoaded(EComponentName.Tsa),
   ])
 
-  // console.log("api", apiPilot.isComponentLoaded(EComponentName.Api))
-  // console.log("map", apiPilot.isComponentLoaded(EComponentName.Map))
-  // console.log("ws", apiPilot.isComponentLoaded(EComponentName.Ws))
-  // console.log("thing", apiPilot.isComponentLoaded(EComponentName.Thing))
-  // console.log("tsa", apiPilot.isComponentLoaded(EComponentName.Tsa))
-
-
   const setup = async () => {
     if (licenseVerified) {
       localStorage.clear()
@@ -61,19 +54,6 @@ function PilotApp() {
       setLogedIn(successfulSignIn)
       const workspaceId = localStorage.getItem(ELocalStorageKey.WorkspaceId)
       if (successfulSignIn) {
-        // Set Platform
-        // const isLoaded = apiPilot.isComponentLoaded(EComponentName.Thing)
-        // if (isLoaded) {
-        //   apiPilot.setPlatformMessage(
-        //     '' + localStorage.getItem(ELocalStorageKey.PlatformName),
-        //     "Test Group React",
-        //     '' + localStorage.getItem(ELocalStorageKey.WorkspaceDesc)
-        //   )
-        // }
-        console.log(await getPlatformInfo())
-        //console.log(workspaceId)
-        // Bind Aircraft
-        console.log("here")
         const binded = await createBinding()
         setBind(binded)
         const devices = await getBindingDevices(workspaceId, 1, 10, 'sub-device')
@@ -137,6 +117,7 @@ function PilotApp() {
       <ModuleCard text={"License Verified"} loaded={licenseVerified} />
       <ModuleCard text={"Signed In"} loaded={loggedIn} />
       <ModuleCard text={"Aircraft Bound"} loaded={bound} />
+      <ModuleCard text={"API"} loaded={isApiLoaded} />
       <ModuleCard text={"Map"} loaded={isMapLoaded} />
       <ModuleCard text={"WS"} loaded={isWsLoaded} />
       <ModuleCard text={"Cloud"} loaded={isThingLoaded} />
