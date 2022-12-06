@@ -324,10 +324,7 @@ export const createBinding = async () => {
     console.error(bindRes.message)
     return false
   }
-  console.log('bindRes', bindRes)
   return true
-  //drone.data.bound_status = true
-  //localStorage.setItem(ELocalStorageKey.Device, JSON.stringify(drone.data))
 }
 
 export const messageHandler = async (payload) => {
@@ -350,7 +347,6 @@ export const messageHandler = async (payload) => {
 }
 
 export const connectCallback = async (arg) => {
-  console.log("inside callback", arg)
   if (arg) {
     console.log("Connected")
     const sn = apiPilot.getAircraftSN()

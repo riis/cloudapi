@@ -14,10 +14,6 @@ const CURRENT_CONFIG = {
   rtmpURL: 'rtmp://10.5.3.82/live/',  // Example: 'rtmp://192.168.1.1/live/' 
   // GB28181 Note:If you don't know what these parameters mean, you can go to Pilot2 and select the GB28181 page in the cloud platform. Where the parameters same as these parameters.
 
-  // map 
-  // You can apply on the AMap website.
-  amapKey: '26d54da6733de88435c68d1a2e88b682',
-
 }
 
 const HTTP_PREFIX = 'http://10.5.3.82:6789/manage/api/v1'

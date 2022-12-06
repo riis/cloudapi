@@ -115,16 +115,6 @@ function PilotApp() {
 
     getDeviceInfo()
 
-    const isLoaded = apiPilot.isComponentLoaded(EComponentName.Thing)
-    // if (isLoaded) {
-    //   apiPilot.setPlatformMessage(
-    //     '' + localStorage.getItem(ELocalStorageKey.PlatformName),
-    //     localStorage.getItem(ELocalStorageKey.WorkspaceName),
-    //     '' + localStorage.getItem(ELocalStorageKey.WorkspaceDesc)
-    //   )
-    //   return
-    // }
-
     apiPilot.setWorkspaceId(localStorage.getItem(ELocalStorageKey.WorkspaceId))
 
     getUserInfo().then(res => {

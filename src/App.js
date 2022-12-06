@@ -21,7 +21,6 @@ function App() {
   const [lat, setLat] = useState(42.35);
 
   const payload = useWebsocket()
-  console.log(payload)
 
   useEffect(() => {
     const attemptLogin = async () => {
