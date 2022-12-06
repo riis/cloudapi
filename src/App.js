@@ -1,37 +1,27 @@
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import { EBizCode, ELocalStorageKey, EUserType } from './api/enums';
 import { getBindingDevices, getDeviceTopo, login } from './api/manage';
-import { Button, Flex, Container } from '@chakra-ui/react';
+import { Button, Flex, Container, useForceUpdate } from '@chakra-ui/react';
 import DeviceCard from './components/project/device_card';
 import { useWebsocket } from './hooks/use-websocket';
 import { getUnreadDeviceHms } from './api/project';
+import { TbDrone } from 'react-icons/tb'
+import { Map, Marker } from 'react-map-gl';
+
+mapboxgl.accessToken = 'pk.eyJ1IjoianJlZWR5LXJpaXMiLCJhIjoiY2xiYjh0MW04MGg4ejNxcGpvcTdic2E4cyJ9.3O96iR2olwbI6QVF7ZLe5Q'
 
 function App() {
   const [devices, setDevices] = useState([])
   const [loggedIn, setLoggedIn] = useState(false)
-  const [deviceOsds, setDevicesOsds] = useState({})
-  console.log(deviceOsds)
-  const messageHandler = async (payload) => {
-    if (!payload) {
-      return
-    }
 
-    switch (payload.biz_code) {
-      case EBizCode.DeviceOsd:
-        setDevicesOsds(prev => {
-          return {
-            ...prev,
-            [payload.data.sn]: payload.data.host
-          }
-        })
-        break;
-      default:
-        break
-    }
-  }
+  const [zoom, setZoom] = useState(9);
+  const [lng, setLng] = useState(-70.9);
+  const [lat, setLat] = useState(42.35);
 
-  useWebsocket(messageHandler)
+  const payload = useWebsocket()
+  console.log(payload)
 
   useEffect(() => {
     const attemptLogin = async () => {
@@ -60,25 +50,45 @@ function App() {
     devices.data.list.map(async device => {
       console.log('hms', await getUnreadDeviceHms(workspaceId, device.device_sn))
     })
-
-    console.log(await getDeviceTopo(workspaceId))
   }
 
   useEffect(() => {
     fetchDevices()
   }, [loggedIn])
 
+  const updateMarker = (device) => {
+    setLng(payload[device.device_sn].longitude)
+    setLat(payload[device.device_sn].latitude)
+  }
 
   return (
     <Flex width="100%" height={'100vh'} >
+      <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css' rel='stylesheet' />
       <Flex flexDir={"column"} width="300px" height={'100%'} p={2}>
         <Button onClick={() => fetchDevices()} >Refresh</Button>
         {devices.map(device => {
-          return <DeviceCard device={device} key={device.device_sn} />
+          return <DeviceCard device={device} key={device.device_sn} onClick={() => updateMarker(device)} />
         })}
       </Flex>
-      <Flex style={{ borderLeftWidth: '1px', borderLeftColor: "componentBorderColor", borderLeftStyle: "solid" }}>
-
+      <Flex style={{ borderLeftWidth: '1px', borderLeftColor: "componentBorderColor", borderLeftStyle: "solid", flexGrow: 1 }}>
+        <Map
+          mapboxAccessToken='pk.eyJ1IjoianJlZWR5LXJpaXMiLCJhIjoiY2xiYjh0MW04MGg4ejNxcGpvcTdic2E4cyJ9.3O96iR2olwbI6QVF7ZLe5Q'
+          initialViewState={{
+            longitude: lng,
+            latitude: lat,
+            zoom: zoom,
+          }}
+          latitude={lat}
+          longitude={lng}
+          mapStyle="mapbox://styles/mapbox/light-v11"
+        >
+          {Object.keys(payload).map(key => {
+            const shouldShow = devices.find(device => device.device_sn === key && device.status)
+            return shouldShow ? (<Marker latitude={payload[key].latitude} longitude={payload[key].longitude} key={key}>
+              <TbDrone size={'50'} color='blue' />
+            </Marker>) : null
+          })}
+        </Map>
       </Flex>
     </Flex>
   );

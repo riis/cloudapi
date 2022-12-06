@@ -4,8 +4,9 @@ import { createBinding, checkToken, verifyLicense, apiPilot, messageHandler, con
 import VConsole from 'vconsole';
 import { DOMAIN, EComponentName, ELocalStorageKey, EStatusValue } from './api/enums';
 import { getBindingDevices, getPlatformInfo, getUserInfo } from './api/manage';
-import { Text } from '@chakra-ui/react'
+import { Flex, Text } from '@chakra-ui/react'
 import { useWebsocket } from './hooks/use-websocket';
+import ModuleCard from './components/pilot/module_card';
 
 const components = apiPilot.init()
 
@@ -132,8 +133,8 @@ function PilotApp() {
       console.log('getUserInfoRes', res)
       const param = {
         host: res.data.mqtt_addr,
-        username: 'admin',//res.data.mqtt_username,
-        password: 'public123',//res.data.mqtt_password,
+        username: res.data.mqtt_username,
+        password: res.data.mqtt_password,
         connectCallback: 'connectCallback'
       }
       components.set(EComponentName.Thing, param)
@@ -142,16 +143,15 @@ function PilotApp() {
   }, [])
 
   return (
-    <div>
-      <Text>License Verified: {licenseVerified.toString()}</Text>
-      <Text>Logged In: {loggedIn.toString()}</Text>
-      <Text>Bound: {bound.toString()}</Text>
-      <Text>API: {isApiLoaded.toString()}</Text>
-      <Text>Map: {isMapLoaded.toString()}</Text>
-      <Text>WS: {isWsLoaded.toString()}</Text>
-      <Text>Thing: {isThingLoaded.toString()}</Text>
-      <Text>TSA: {isTsaLoaded.toString()}</Text>
-    </div>
+    <Flex flexDir={'column'} p={4}>
+      <ModuleCard text={"License Verified"} loaded={licenseVerified} />
+      <ModuleCard text={"Signed In"} loaded={loggedIn} />
+      <ModuleCard text={"Aircraft Bound"} loaded={bound} />
+      <ModuleCard text={"Map"} loaded={isMapLoaded} />
+      <ModuleCard text={"WS"} loaded={isWsLoaded} />
+      <ModuleCard text={"Cloud"} loaded={isThingLoaded} />
+      <ModuleCard text={"TSA"} loaded={isTsaLoaded} />
+    </Flex>
   );
 }
 
